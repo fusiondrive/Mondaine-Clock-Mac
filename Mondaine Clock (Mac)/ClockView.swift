@@ -12,7 +12,7 @@ import SwiftUI
 struct ClockView: View {
     @Environment(\.colorScheme) var colorScheme // 检测系统主题
     @State private var currentTime = CurrentTime()
-    @State private var lastSecond: Int = 0 // 记录上次的秒数
+    @State private var lastSecond: Int = 0 
 
     var body: some View {
         ZStack {
@@ -29,7 +29,7 @@ struct ClockView: View {
                 .frame(width: 785, height: 785) // 固定表盘的大小
                 .shadow(color: .black.opacity(0.5), radius: 10, x: 0, y: 5)
 
-            // 时钟指示器
+            // 刻度
             Image(colorScheme == .dark ? "ClockIndicator_Dark" : "ClockIndicator")
                 .resizable()
                 .scaledToFit()
@@ -47,7 +47,7 @@ struct ClockView: View {
             // 分针
             Image(colorScheme == .dark ? "MINBAR_Dark" : "MINBAR")
                 .resizable()
-                .frame(width: 50, height: 685.73) // 固定分针的大小
+                .frame(width: 50, height: 685.73)
                 .rotationEffect(Angle.degrees(currentTime.minutesAngle))
                 .shadow(color: .black.opacity(0.5), radius: 10, x: 0, y: 5)
 
@@ -58,7 +58,7 @@ struct ClockView: View {
                 .offset(y: -1)
                 .rotationEffect(Angle.degrees(currentTime.secondsAngle))
                 .shadow(color: .black.opacity(0.5), radius: 10, x: 0, y: 5)
-                .animation(.linear(duration: 1.0), value: currentTime.secondsAngle) // 添加平滑动画
+                .animation(.linear(duration: 1.0), value: currentTime.secondsAngle) //smooth animation
         }
         .onAppear(perform: startClock)
     }

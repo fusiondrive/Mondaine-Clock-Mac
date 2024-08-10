@@ -5,7 +5,6 @@
 //  Created by Steve Wang on 8/10/24.
 //
 
-import SwiftUI
 
 import SwiftUI
 
@@ -98,10 +97,8 @@ struct CurrentTime {
 struct ClockView_Previews: PreviewProvider {
     static var previews: some View {
         ClockView()
-            .previewDevice("iPhone 12")
-        ClockView()
             .previewLayout(.sizeThatFits)
-            .frame(width: 800, height: 800)
+            .frame(width: 1470, height: 956)
             .previewDisplayName("macOS Preview")
     }
 }

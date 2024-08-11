@@ -11,7 +11,9 @@ import SwiftUI
 struct ClockView: View {
     @State private var currentTime = CurrentTime()
     @State private var lastSecond: Int = 0
-    @State private var timer: Timer? // 使用 @State 来管理定时器
+    @State private var timer: Timer?
+    @State private var secondsElapsed: Double = 0
+    @State private var shouldAnimate: Bool = true
 
     var body: some View {
         ZStack {
@@ -25,7 +27,7 @@ struct ClockView: View {
             Image("ClockFace")
                 .resizable()
                 .scaledToFit()
-                .frame(width: 785, height: 785) // 固定表盘的大小
+                .frame(width: 785, height: 785)
                 .shadow(color: .black.opacity(0.5), radius: 10, x: 0, y: 5)
 
             // 刻度
@@ -33,7 +35,7 @@ struct ClockView: View {
                 .resizable()
                 .scaledToFit()
                 .frame(width: 730, height: 730)
-                .offset(y: 4) // 修改 offset 使其居中
+                .offset(y: 4)
                 .shadow(color: .black.opacity(0.5), radius: 2, x: 0, y: 2)
 
             // 时针
@@ -55,9 +57,9 @@ struct ClockView: View {
                 .resizable()
                 .frame(width: 383, height: 579)
                 .offset(y: -1)
-                .rotationEffect(Angle.degrees(currentTime.secondsAngle))
+                .rotationEffect(Angle.degrees(secondsElapsed * 6)) // 每秒 6 度
                 .shadow(color: .black.opacity(0.5), radius: 10, x: 0, y: 5)
-                .animation(.linear(duration: 1.0), value: currentTime.secondsAngle) //smooth animation
+                .animation(shouldAnimate ? .linear(duration: 1.0) : .none, value: secondsElapsed) // 动态控制动画
         }
         .onAppear(perform: startClock)
     }
@@ -66,19 +68,32 @@ struct ClockView: View {
         let calendar = Calendar.current
         let now = Date()
         
+        // 计算当前秒数已过的时间
         let nanoseconds = calendar.component(.nanosecond, from: now)
         let timeToNextSecond = Double(1_000_000_000 - nanoseconds) / 1_000_000_000.0
         
+        // 创建一个定时器
         timer = Timer(timeInterval: 1.0, repeats: true) { _ in
             let newSecond = calendar.component(.second, from: Date())
-            if newSecond != self.lastSecond {
-                self.lastSecond = newSecond
-                self.currentTime = CurrentTime()
+            
+            // 动态控制是否需要动画
+            if newSecond == 0 {
+                shouldAnimate = false // 在0秒时禁用动画
+                secondsElapsed = 0 // 确保秒针直接跳回起始位置
+            } else {
+                shouldAnimate = true // 其他时间启用动画
+                secondsElapsed = Double(newSecond)
             }
+
+            // 更新分针
+            self.currentTime = CurrentTime()
+            lastSecond = newSecond
         }
         
+        // 设置定时器的第一次触发时间为下一个整秒
         timer?.fireDate = now.addingTimeInterval(timeToNextSecond)
         
+        // 将定时器添加到运行循环中
         if let timer = timer {
             RunLoop.main.add(timer, forMode: .common)
         }

@@ -175,7 +175,7 @@
 				};
 			};
 			buildConfigurationList = D00ABDA72C6799FE00FC53FF /* Build configuration list for PBXProject "Mondaine Clock (Mac)" */;
-			compatibilityVersion = "Xcode 15.0";
+			compatibilityVersion = "Xcode 12.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
